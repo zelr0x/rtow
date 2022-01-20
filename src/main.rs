@@ -1,4 +1,9 @@
+#![feature(const_trait_impl)]
+#![feature(const_fn_floating_point_arithmetic)]
+
 use std::io::{self, Write};
+
+mod vec3;
 
 fn main() -> io::Result<()> {
     let image_width = 256;
