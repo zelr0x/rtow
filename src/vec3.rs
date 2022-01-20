@@ -1,13 +1,16 @@
-use std::ops::{Index, Neg, AddAssign, MulAssign, DivAssign};
+use std::{
+    fmt,
+    ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub},
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Vec3 {
-    e: [f64; 3]
+    e: [f64; 3],
 }
 
 impl Vec3 {
     pub const fn new(x: f64, y: f64, z: f64) -> Vec3 {
-        Vec3 {e: [x, y, z]}
+        Vec3 { e: [x, y, z] }
     }
 
     pub fn length(&self) -> f64 {
@@ -15,9 +18,23 @@ impl Vec3 {
     }
 
     pub const fn length_squared(&self) -> f64 {
-        self.x() * self.x()
-        + self.y() * self.y()
-        + self.z() * self.z()
+        self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
+    }
+
+    pub const fn dot(&self, rhs: &Vec3) -> f64 {
+        self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
+    }
+
+    pub const fn cross(&self, rhs: &Vec3) -> Vec3 {
+        Vec3::new(
+            self.y() * rhs.z() - self.z() * rhs.y(),
+            self.z() * rhs.x() - self.x() * rhs.z(),
+            self.x() * rhs.y() - self.y() * rhs.x(),
+        )
+    }
+
+    pub fn unit_vector(&self, rhs: &Vec3) -> Vec3 {
+        rhs / self.length()
     }
 
     pub const fn x(&self) -> f64 {
@@ -50,8 +67,56 @@ impl const Neg for Vec3 {
 impl const Index<usize> for Vec3 {
     type Output = f64;
 
-    fn index(&self, idx: usize) -> &f64 {
+    fn index(&self, idx: usize) -> &Self::Output {
         &self.e[idx]
+    }
+}
+
+impl const Add<&Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
+    }
+}
+
+impl const Sub<&Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z())
+    }
+}
+
+impl const Mul<&Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
+    }
+}
+
+impl const Mul<f64> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vec3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
+    }
+}
+
+impl const Mul<&Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(self * rhs.x(), self * rhs.y(), self * rhs.z())
+    }
+}
+
+impl const Div<f64> for &Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        (1. / rhs) * self
     }
 }
 
@@ -77,6 +142,12 @@ impl DivAssign<f64> for Vec3 {
     }
 }
 
+impl fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {}", self.x(), self.y(), self.z())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -90,7 +161,7 @@ mod tests {
 
     #[test]
     fn default_works() {
-        let v= Vec3::default();
+        let v = Vec3::default();
         assert_eq!(Vec3::new(0., 0., 0.), v);
     }
 
@@ -113,5 +184,11 @@ mod tests {
         let b = Vec3::new(1.0, 2.0, 5.0);
         a += &b;
         assert_eq!(Vec3::new(3.0, 5.0, 15.0), a);
+    }
+
+    #[test]
+    fn display_works() {
+        let v = Vec3::new(1., 2., 3.);
+        assert_eq!(format!("{}", v), "1 2 3")
     }
 }
