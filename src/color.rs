@@ -3,6 +3,7 @@ use std::fmt;
 use crate::vec3::Vec3;
 
 /// `Color` represents an RGB color.
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct Color(Vec3);
 
 impl Color {
