@@ -3,6 +3,9 @@
 
 use std::io::{self, Write};
 
+use crate::color::Color;
+
+pub mod color;
 mod vec3;
 
 fn main() -> io::Result<()> {
@@ -20,10 +23,7 @@ fn main() -> io::Result<()> {
             let r = i as f64 / (image_width as f64 - 1.0);
             let g = j as f64 / (image_height as f64 - 1.0);
             let b = 0.25;
-            let ir = (255.999 * r) as i64;
-            let ig = (255.999 * g) as i64;
-            let ib = (255.999 * b) as i64;
-            println!("{} {} {}", ir, ig, ib);
+            println!("{}", &Color::new(r, g, b));
         }
     }
     io::stderr().write(b"\nDone.\n")?;
