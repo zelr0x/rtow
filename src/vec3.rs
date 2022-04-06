@@ -86,6 +86,22 @@ impl const Add<&Vec3> for &Vec3 {
     }
 }
 
+impl const Add<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Self::Output {
+        self.add(&rhs)
+    }
+}
+
+impl const Add<&Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: &Vec3) -> Self::Output {
+        rhs.add(self)
+    }
+}
+
 impl const Sub<&Vec3> for &Vec3 {
     type Output = Vec3;
 
