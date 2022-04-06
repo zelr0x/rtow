@@ -3,7 +3,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub},
 };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
 }
@@ -53,6 +53,12 @@ impl Vec3 {
 impl const Default for Vec3 {
     fn default() -> Vec3 {
         Vec3::new(0., 0., 0.)
+    }
+}
+
+impl const Clone for Vec3 {
+    fn clone(&self) -> Self {
+        Self { e: [self.x(), self.y(), self.z()] }
     }
 }
 
