@@ -8,8 +8,11 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub const fn new(origin: &Point3, direction: &Vec3) ->  Ray {
-        Ray { origin: origin.clone(), direction: direction.clone() }
+    pub const fn new(origin: &Point3, direction: &Vec3) -> Ray {
+        Ray {
+            origin: origin.clone(),
+            direction: direction.clone(),
+        }
     }
 
     pub const fn origin(&self) -> &Point3 {

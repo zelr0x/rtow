@@ -33,8 +33,8 @@ impl Vec3 {
         )
     }
 
-    pub fn unit_vector(&self, rhs: &Vec3) -> Vec3 {
-        rhs / self.length()
+    pub fn unit_vector(&self) -> Vec3 {
+        self / self.length()
     }
 
     pub const fn x(&self) -> f64 {
@@ -58,7 +58,9 @@ impl const Default for Vec3 {
 
 impl const Clone for Vec3 {
     fn clone(&self) -> Self {
-        Self { e: [self.x(), self.y(), self.z()] }
+        Self {
+            e: [self.x(), self.y(), self.z()],
+        }
     }
 }
 
@@ -102,11 +104,43 @@ impl const Add<&Vec3> for Vec3 {
     }
 }
 
+impl const Add<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Self::Output {
+        self.add(&rhs)
+    }
+}
+
 impl const Sub<&Vec3> for &Vec3 {
     type Output = Vec3;
 
     fn sub(self, rhs: &Vec3) -> Self::Output {
         Vec3::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z())
+    }
+}
+
+impl const Sub<&Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &Vec3) -> Self::Output {
+        &self - rhs
+    }
+}
+
+impl const Sub<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Self::Output {
+        self - &rhs
+    }
+}
+
+impl const Sub<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Self::Output {
+        &self - &rhs
     }
 }
 
