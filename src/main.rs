@@ -43,7 +43,7 @@ fn main() -> io::Result<()> {
                 &(&lower_left_corner + u * &horizontal + v * &vertical - &origin),
             );
             let color = ray_color(&r);
-            print!("{}", &color);
+            println!("{}", &color);
         }
     }
     eprintln!("\nDone.");
