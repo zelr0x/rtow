@@ -60,6 +60,12 @@ impl const Clone for Vec3 {
     fn clone(&self) -> Self {
         Self { e: [self.x(), self.y(), self.z()] }
     }
+
+    fn clone_from(&mut self, source: &Self) {
+        self.e[0] = source.x();
+        self.e[1] = source.y();
+        self.e[2] = source.z();
+    }
 }
 
 impl const Neg for Vec3 {

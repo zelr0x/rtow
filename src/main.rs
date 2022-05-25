@@ -1,5 +1,6 @@
 #![feature(const_trait_impl)]
 #![feature(const_fn_floating_point_arithmetic)]
+#![feature(const_mut_refs)]
 
 use std::io::{self, Write};
 
