@@ -1,4 +1,7 @@
-use std::fmt;
+use std::{
+    fmt,
+    ops::{Add, Mul},
+};
 
 use crate::vec3::Vec3;
 
@@ -22,5 +25,61 @@ impl fmt::Display for Color {
             (255.999 * self.0.y()) as i64,
             (255.999 * self.0.z()) as i64
         )
+    }
+}
+
+impl const Mul<Color> for f64 {
+    type Output = Color;
+
+    fn mul(self, rhs: Color) -> Self::Output {
+        Color(self * &rhs.0)
+    }
+}
+
+impl const Mul<f64> for Color {
+    type Output = Color;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Color(&self.0 * rhs)
+    }
+}
+
+impl const Mul<&Color> for f64 {
+    type Output = Color;
+
+    fn mul(self, rhs: &Color) -> Self::Output {
+        Color(self * &rhs.0)
+    }
+}
+
+impl const Add<&Color> for Color {
+    type Output = Color;
+
+    fn add(self, rhs: &Color) -> Self::Output {
+        Color(&self.0 + &rhs.0)
+    }
+}
+
+impl const Add<Color> for &Color {
+    type Output = Color;
+
+    fn add(self, rhs: Color) -> Self::Output {
+        Color(&self.0 + &rhs.0)
+    }
+}
+
+impl const Add<&Color> for &Color {
+    type Output = Color;
+
+    fn add(self, rhs: &Color) -> Self::Output {
+        Color(&self.0 + &rhs.0)
+    }
+}
+
+impl const Add<Color> for Color {
+    type Output = Color;
+
+    fn add(self, rhs: Color) -> Self::Output {
+        Color(&self.0 + &rhs.0)
     }
 }
