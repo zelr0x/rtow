@@ -1,4 +1,4 @@
-use crate::{point::Point3, hit::{Hit, HitResult}, ray::Ray, vec3::Vec3};
+use crate::{point::Point3, hit::{Hit, HitData}, ray::Ray, vec3::Vec3};
 
 #[derive(Debug, Clone, Default)]
 pub struct Sphere {
@@ -21,7 +21,7 @@ impl Sphere {
 }
 
 impl Hit for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitResult> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitData> {
         let oc = ray.origin() - self.center();
         let a = ray.direction().length_squared();
         let half_b = Vec3::dot(&oc, ray.direction());
@@ -33,7 +33,7 @@ impl Hit for Sphere {
         let t = nearest_root(a, half_b, discriminant, t_min, t_max)?;
         let point = ray.at(t);
         let normal = &(&point - self.center()) / self.radius;
-        Some(HitResult::new(point, normal, t))
+        Some(HitData::new(point, normal, t))
     }
 }
 
