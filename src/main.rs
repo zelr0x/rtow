@@ -50,11 +50,13 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn ray_color(ray: &Ray) -> Color {
-    if ray.hits_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5) {
-        return Color::new(1.0, 0.0, 0.0)
+fn ray_color(r: &Ray) -> Color {
+    let t = r.hit_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5);
+    if t > 0.0 {
+        let n = Vec3::unit_vector(&(r.at(t) - Vec3::new(0.0, 0.0, -1.0)));
+        return 0.5 * Color::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0)
     }
-    let unit_direction = ray.direction().unit_vector();
+    let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }
