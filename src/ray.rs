@@ -26,17 +26,4 @@ impl Ray {
     pub const fn at(&self, t: f64) -> Point3 {
         self.origin() + t * self.direction()
     }
-
-    pub fn hit_sphere(&self, center: &Point3, radius: f64) -> f64 {
-        let oc = self.origin() - center;
-        let a = self.direction().length_squared();
-        let half_b = Vec3::dot(&oc, self.direction());
-        let c = oc.length_squared() - radius * radius;
-        let discriminant = half_b * half_b - a * c;
-        if discriminant < 0.0 {
-            -1.0
-        } else {
-            (-half_b - discriminant.sqrt()) / a
-        }
-    }
 }
