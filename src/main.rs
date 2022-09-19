@@ -2,7 +2,7 @@
 #![feature(const_fn_floating_point_arithmetic)]
 #![feature(const_mut_refs)]
 
-use std::io::{self, Write};
+use std::{io::{self, Write}, rc::Rc};
 
 use ray::Ray;
 use hit::{Hit, HitList};
@@ -22,6 +22,11 @@ fn main() -> io::Result<()> {
     let aspect_ratio: f64 = 16.0 / 9.0;
     let image_width: i64 = 400;
     let image_height: i64 = (image_width as f64 / aspect_ratio) as i64;
+
+    // World.
+    let mut world = HitList::with_capacity(2);
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera.
     let viewport_height = 2.0;
@@ -46,7 +51,7 @@ fn main() -> io::Result<()> {
                 &origin,
                 &(&lower_left_corner + u * &horizontal + v * &vertical - &origin),
             );
-            let color = ray_color(&r);
+            let color = ray_color(&r, &world);
             println!("{}", &color);
         }
     }
@@ -54,14 +59,9 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn ray_color(r: &Ray) -> Color {
-    let sphere = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
-    let objects = HitList::new(&sphere);
-    let hit_res = objects.hit(&r, f64::MIN, f64::MAX);
-    let t = hit_res.map_or(-1.0, |x| x.t());
-    if t > 0.0 {
-        let n = Vec3::unit_vector(&(r.at(t) - Vec3::new(0.0, 0.0, -1.0)));
-        return 0.5 * Color::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0)
+fn ray_color(r: &Ray, world: &HitList) -> Color {
+    if let Some(hd) = world.hit(&r, 0.0, f64::INFINITY) {
+        return 0.5 * (hd.normal() + Color::new(1.0, 1.0, 1.0))
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);

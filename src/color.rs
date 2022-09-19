@@ -83,3 +83,35 @@ impl const Add<Color> for Color {
         Color(&self.0 + &rhs.0)
     }
 }
+
+impl const Add<&Color> for &Vec3 {
+    type Output = Color;
+
+    fn add(self, rhs: &Color) -> Self::Output {
+        Color(self + &rhs.0)
+    }
+}
+
+impl const Add<&Color> for Vec3 {
+    type Output = Color;
+
+    fn add(self, rhs: &Color) -> Self::Output {
+        Color(&self + &rhs.0)
+    }
+}
+
+impl const Add<Color> for &Vec3 {
+    type Output = Color;
+
+    fn add(self, rhs: Color) -> Self::Output {
+        Color(self + &rhs.0)
+    }
+}
+
+impl const Add<Color> for Vec3 {
+    type Output = Color;
+
+    fn add(self, rhs: Color) -> Self::Output {
+        Color(&self + &rhs.0)
+    }
+}
