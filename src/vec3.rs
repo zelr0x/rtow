@@ -70,11 +70,19 @@ impl const Clone for Vec3 {
     }
 }
 
-impl const Neg for Vec3 {
+impl const Neg for &Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Vec3 {
         Vec3::new(-self.x(), -self.y(), -self.z())
+    }
+}
+
+impl const Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        -(&self)
     }
 }
 
@@ -182,6 +190,14 @@ impl const Div<f64> for &Vec3 {
     }
 }
 
+impl const Div<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        &self / rhs
+    }
+}
+
 impl AddAssign<&Vec3> for Vec3 {
     fn add_assign(&mut self, rhs: &Vec3) {
         self.e[0] += rhs.x();
@@ -238,6 +254,20 @@ mod tests {
         let v = Vec3::new(1., 2., 3.);
         let first: f64 = v[0];
         assert_eq!(first, 1.);
+    }
+
+    #[test]
+    fn neg_works() {
+        let a = Vec3::new(1., 2., 3.);
+        let b = Vec3::new(-1., -2., -3.);
+        assert_eq!(-a, b);
+    }
+
+    #[test]
+    fn neg_ref_works() {
+        let a = &Vec3::new(1., 2., 3.);
+        let b = Vec3::new(-1., -2., -3.);
+        assert_eq!(-a, b);
     }
 
     #[test]
