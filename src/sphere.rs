@@ -7,15 +7,15 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64) -> Sphere {
+    pub const fn new(center: Point3, radius: f64) -> Sphere {
         Sphere { center, radius }
     }
 
-    pub fn center(&self) -> &Point3 {
+    pub const fn center(&self) -> &Point3 {
         &self.center
     }
 
-    pub fn radius(&self) -> f64 {
+    pub const fn radius(&self) -> f64 {
         self.radius
     }
 }
@@ -32,8 +32,8 @@ impl Hit for Sphere {
         }
         let t = nearest_root(a, half_b, discriminant, t_min, t_max)?;
         let point = ray.at(t);
-        let normal = &(&point - self.center()) / self.radius;
-        Some(HitData::new(point, normal, t))
+        let outward_normal = (&point - self.center()) / self.radius();
+        Some(HitData::new(point, t, ray, &outward_normal))
     }
 }
 
