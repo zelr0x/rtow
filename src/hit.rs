@@ -41,3 +41,39 @@ impl HitData {
 pub trait Hit {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitData>;
 }
+
+pub struct HitList<'a>(Vec<&'a dyn Hit>);
+
+impl<'a> HitList<'a> {
+    pub fn new(obj: &'a dyn Hit) -> HitList<'a> {
+        HitList(vec![obj])
+    }
+
+    pub fn with_capacity(obj: &'a dyn Hit, cap: usize) -> HitList<'a> {
+        let mut res = HitList(Vec::with_capacity(cap));
+        res.add(obj);
+        res
+    }
+
+    pub fn add(&mut self, obj: &'a dyn Hit) {
+        self.0.push(obj);
+    }
+
+    pub fn clear(&mut self) {
+        self.0.clear();
+    }
+}
+
+impl<'a> Hit for HitList<'a> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitData> {
+        let mut res: Option<HitData> = None;
+        let mut closest_so_far = t_max;
+        for obj in &self.0 {
+            if let Some(hd) = obj.hit(ray, t_min, closest_so_far) {
+                closest_so_far = hd.t();
+                res = Some(hd);
+            }
+        }
+        res
+    }
+}

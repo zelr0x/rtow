@@ -5,7 +5,7 @@
 use std::io::{self, Write};
 
 use ray::Ray;
-use hit::{Hit};
+use hit::{Hit, HitList};
 use sphere::Sphere;
 
 use crate::{color::Color, point::Point3, vec3::Vec3};
@@ -56,7 +56,8 @@ fn main() -> io::Result<()> {
 
 fn ray_color(r: &Ray) -> Color {
     let sphere = Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5);
-    let hit_res = sphere.hit(&r, f64::MIN, f64::MAX);
+    let objects = HitList::new(&sphere);
+    let hit_res = objects.hit(&r, f64::MIN, f64::MAX);
     let t = hit_res.map_or(-1.0, |x| x.t());
     if t > 0.0 {
         let n = Vec3::unit_vector(&(r.at(t) - Vec3::new(0.0, 0.0, -1.0)));
