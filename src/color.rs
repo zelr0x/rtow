@@ -35,11 +35,11 @@ impl Color {
         let mut r = self.r();
         let mut g = self.g();
         let mut b = self.b();
-        // Divide the color by the number of samples.
+        // Divide the color by the number of samples and gamma-correct for gamma=2.0.
         let scale = 1.0 / (samples_per_px as f64);
-        r *= scale;
-        g *= scale;
-        b *= scale;
+        r = (scale * r).sqrt();
+        g = (scale * g).sqrt();
+        b = (scale * b).sqrt();
         // Translate value of each color component to [0, 255].
         TranslatedColor {
             r: (256.0 * r.clamp(0.0, 0.999)) as u32,
