@@ -198,7 +198,7 @@ impl const Div<f64> for Vec3 {
     }
 }
 
-impl AddAssign<&Vec3> for Vec3 {
+impl const AddAssign<&Vec3> for Vec3 {
     fn add_assign(&mut self, rhs: &Vec3) {
         self.e[0] += rhs.x();
         self.e[1] += rhs.y();
@@ -206,7 +206,7 @@ impl AddAssign<&Vec3> for Vec3 {
     }
 }
 
-impl MulAssign<f64> for Vec3 {
+impl const MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, t: f64) {
         self.e[0] *= t;
         self.e[1] *= t;
@@ -214,7 +214,7 @@ impl MulAssign<f64> for Vec3 {
     }
 }
 
-impl DivAssign<f64> for Vec3 {
+impl const DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, t: f64) {
         *self *= 1. / t;
     }

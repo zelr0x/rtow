@@ -14,6 +14,7 @@ use crate::{
     point::Point3,
     ray::Ray,
     sphere::Sphere,
+    ppm::PpmColor,
 };
 
 pub mod camera;
@@ -24,12 +25,14 @@ pub mod hit;
 pub mod util;
 mod sphere;
 mod vec3;
+mod ppm;
 
 fn main() -> io::Result<()> {
     // Image.
     let aspect_ratio: f64 = 16.0 / 9.0;
     let image_width: i64 = 400;
     let image_height: i64 = (image_width as f64 / aspect_ratio) as i64;
+    let samples_per_px = 100;
 
     // World.
     let mut world = HitList::with_capacity(2);
@@ -45,11 +48,14 @@ fn main() -> io::Result<()> {
         io::stderr().write(format!("\rScanlines remaining: {} ", j).as_bytes())?;
         io::stderr().flush()?;
         for i in 0..image_width {
-            let u = (i as f64) / (image_width - 1) as f64;
-            let v = (j as f64) / (image_height - 1) as f64;
-            let r = camera.ray(u, v);
-            let color = ray_color(&r, &world);
-            println!("{}", &color);
+            let mut color = Color::default();
+            for _ in 0..samples_per_px {
+                let u = (i as f64 + util::rand()) / (image_width - 1) as f64;
+                let v = (j as f64 + util::rand()) / (image_height - 1) as f64;
+                let r = camera.ray(u, v);
+                color += ray_color(&r, &world);
+            }
+            println!("{}", PpmColor(&color.translate(samples_per_px)));
         }
     }
     eprintln!("\nDone.");
@@ -68,6 +74,8 @@ fn ray_color(r: &Ray, world: &HitList) -> Color {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const SAMPLES_PER_PX: u32 = 10;
 
     #[test]
     #[ignore]
@@ -88,7 +96,7 @@ mod tests {
                 let r = i as f64 / (image_width as f64 - 1.0);
                 let g = j as f64 / (image_height as f64 - 1.0);
                 let b = 0.25;
-                println!("{}", &Color::new(r, g, b));
+                println!("{}", PpmColor(&Color::new(r, g, b).translate(SAMPLES_PER_PX)));
             }
         }
         io::stderr().write(b"\nDone.\n")?;
