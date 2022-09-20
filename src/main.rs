@@ -14,6 +14,7 @@ pub mod color;
 pub mod point;
 pub mod ray;
 pub mod hit;
+pub mod util;
 mod sphere;
 mod vec3;
 
