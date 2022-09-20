@@ -13,18 +13,6 @@ impl Vec3 {
         Vec3 { e: [x, y, z] }
     }
 
-    pub fn length(&self) -> f64 {
-        self.length_squared().sqrt()
-    }
-
-    pub const fn length_squared(&self) -> f64 {
-        self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
-    }
-
-    pub const fn dot(&self, rhs: &Vec3) -> f64 {
-        self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
-    }
-
     pub const fn cross(&self, rhs: &Vec3) -> Vec3 {
         Vec3::new(
             self.y() * rhs.z() - self.z() * rhs.y(),
@@ -35,6 +23,18 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
+    }
+
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
+
+    pub const fn length_squared(&self) -> f64 {
+        self.x() * self.x() + self.y() * self.y() + self.z() * self.z()
+    }
+
+    pub const fn dot(&self, rhs: &Vec3) -> f64 {
+        self.x() * rhs.x() + self.y() * rhs.y() + self.z() * rhs.z()
     }
 
     pub const fn x(&self) -> f64 {
