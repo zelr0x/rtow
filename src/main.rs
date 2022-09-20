@@ -7,6 +7,8 @@ extern crate lazy_static;
 
 use std::{io::{self, Write}, rc::Rc};
 
+use vec3::Vec3;
+
 use crate::{
     camera::Camera,
     color::Color,
@@ -30,9 +32,10 @@ mod ppm;
 fn main() -> io::Result<()> {
     // Image.
     let aspect_ratio: f64 = 16.0 / 9.0;
-    let image_width: i64 = 400;
-    let image_height: i64 = (image_width as f64 / aspect_ratio) as i64;
+    let image_width: u32 = 400;
+    let image_height: u32 = (image_width as f64 / aspect_ratio) as u32;
     let samples_per_px = 100;
+    let max_depth: u32 = 50;
 
     // World.
     let mut world = HitList::with_capacity(2);
@@ -53,7 +56,7 @@ fn main() -> io::Result<()> {
                 let u = (i as f64 + util::rand()) / (image_width - 1) as f64;
                 let v = (j as f64 + util::rand()) / (image_height - 1) as f64;
                 let r = camera.ray(u, v);
-                color += ray_color(&r, &world);
+                color += ray_color(&r, &world, max_depth);
             }
             println!("{}", PpmColor(&color.translate(samples_per_px)));
         }
@@ -62,9 +65,15 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn ray_color(r: &Ray, world: &HitList) -> Color {
+fn ray_color(r: &Ray, world: &HitList, depth: u32) -> Color {
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if depth <= 0 {
+        return Color::default()
+    }
     if let Some(hd) = world.hit(&r, 0.0, f64::INFINITY) {
-        return 0.5 * (hd.normal() + Color::new(1.0, 1.0, 1.0))
+        let target = hd.point() + hd.normal() + Vec3::rand_in_unit_sphere();
+        let dir = target - hd.point();
+        return 0.5 * ray_color(&Ray::new(hd.point(), &dir), &world, depth - 1)
     }
     let unit_direction = r.direction().unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);

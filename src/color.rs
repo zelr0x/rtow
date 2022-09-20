@@ -3,10 +3,11 @@ use std::ops::{Add, Mul, AddAssign};
 use crate::vec3::Vec3;
 
 /// `Color` represents an RGB color.
+/// Default is required to return RGB (0, 0, 0).
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct Color(Vec3);
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct TranslatedColor {
     pub r: u32,
     pub g: u32,

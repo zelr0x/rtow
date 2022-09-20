@@ -3,6 +3,8 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub},
 };
 
+use crate::util;
+
 #[derive(Debug, PartialEq)]
 pub struct Vec3 {
     e: [f64; 3],
@@ -11,6 +13,27 @@ pub struct Vec3 {
 impl Vec3 {
     pub const fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { e: [x, y, z] }
+    }
+
+    pub fn rand() -> Vec3 {
+        Vec3::new(util::rand(), util::rand(), util::rand())
+    }
+
+    pub fn rand_range(min: f64, max: f64) -> Vec3 {
+        Vec3::new(
+            util::rand_range(min, max),
+            util::rand_range(min, max),
+            util::rand_range(min, max)
+        )
+    }
+
+    pub fn rand_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::rand_range(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p
+            }
+        }
     }
 
     pub const fn cross(&self, rhs: &Vec3) -> Vec3 {
