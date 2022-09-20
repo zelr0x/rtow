@@ -7,12 +7,16 @@ extern crate lazy_static;
 
 use std::{io::{self, Write}, rc::Rc};
 
-use ray::Ray;
-use hit::{Hit, HitList};
-use sphere::Sphere;
+use crate::{
+    camera::Camera,
+    color::Color,
+    hit::{Hit, HitList},
+    point::Point3,
+    ray::Ray,
+    sphere::Sphere,
+};
 
-use crate::{color::Color, point::Point3, vec3::Vec3};
-
+pub mod camera;
 pub mod color;
 pub mod point;
 pub mod ray;
@@ -33,15 +37,7 @@ fn main() -> io::Result<()> {
     world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera.
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3::default();
-    let horizontal = Vec3::new(viewport_width, 0., 0.);
-    let vertical = Vec3::new(0., viewport_height, 0.);
-    let lower_left_corner =
-        &origin - &horizontal / 2. - &vertical / 2. - Vec3::new(0., 0., focal_length);
+    let camera = Camera::new(aspect_ratio);
 
     // Render.
     println!("P3\n{} {}\n255\n", image_width, image_height);
@@ -51,10 +47,7 @@ fn main() -> io::Result<()> {
         for i in 0..image_width {
             let u = (i as f64) / (image_width - 1) as f64;
             let v = (j as f64) / (image_height - 1) as f64;
-            let r = Ray::new(
-                &origin,
-                &(&lower_left_corner + u * &horizontal + v * &vertical - &origin),
-            );
+            let r = camera.ray(u, v);
             let color = ray_color(&r, &world);
             println!("{}", &color);
         }
