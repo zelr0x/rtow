@@ -2,6 +2,9 @@
 #![feature(const_fn_floating_point_arithmetic)]
 #![feature(const_mut_refs)]
 
+#[macro_use]
+extern crate lazy_static;
+
 use std::{io::{self, Write}, rc::Rc};
 
 use ray::Ray;

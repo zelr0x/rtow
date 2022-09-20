@@ -3,6 +3,12 @@ use rand::{prelude::Distribution, distributions::Uniform};
 /// Custom PI for portability.
 const PI: f64 = 3.1415926535897932385;
 
+lazy_static! {
+    static ref UNIFORM: Uniform<f64> = {
+        Uniform::new(0.0, 1.0)
+    };
+}
+
 /// Converts degrees to radians.
 #[inline(always)]
 pub fn deg_to_rad(degrees: f64) -> f64 {
@@ -12,8 +18,7 @@ pub fn deg_to_rad(degrees: f64) -> f64 {
 /// Returns a random real in [0, 1).
 #[inline(always)]
 pub fn rand() -> f64 {
-    let distr = Uniform::new(0.0, 1.0);
-    distr.sample(&mut rand::thread_rng())
+    UNIFORM.sample(&mut rand::thread_rng())
 }
 
 #[inline(always)]
